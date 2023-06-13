@@ -23,6 +23,9 @@ class Storevector:
             vector = self.vector,
         )
     
+    def search_knowlegde(self,query,vector_search_top_k=10):
+        return self.vector.similarity_search(query, k=vector_search_top_k)
+    
     def get_knowledge_based_answer(self, query, vector_search_top_k=10, chat_history=[]):
         related_docs = self.vector.similarity_search(query, k=vector_search_top_k)
         prompt = "\n".join([doc.page_content for doc in related_docs])

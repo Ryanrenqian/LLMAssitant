@@ -18,8 +18,8 @@ Thought: I now know the final answer
 Final Answer: the final answer to the original input question
 Begin! Remember to speak as a pirate when giving your final answer. Use lots of "Arg"s
 Question: {input}
-{agent_scratchpad}
-ASSISTANT:"""
+{agent_scratchpad} 
+ ASSISTANT:"""
 # Set up a prompt template
 class CustomPromptTemplate(StringPromptTemplate):
     # The template to use

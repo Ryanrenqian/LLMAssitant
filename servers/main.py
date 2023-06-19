@@ -3,9 +3,6 @@ from models import *
 from fastchat.model.model_adapter import load_model
 import torch
 
-
-
-
 app = FastAPI()
 model_path = '/root/autodl-tmp/cache/transformers/vicuna/13B'
 device ='cuda'

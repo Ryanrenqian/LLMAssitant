@@ -1,7 +1,6 @@
 from langchain.llms.base import LLM
 from typing import Optional, List, Mapping, Any
-import requests
-
+import requests,httpx
 class UrlLLM(LLM):
     url: str
     @property
@@ -9,15 +8,22 @@ class UrlLLM(LLM):
         return "custom"
     
     def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
-        response = requests.post(
-            self.url,
+        with httpx.Client() as client:
             json={
                 "prompt": prompt,
-                "temperature": 0.75,
+                "temperature": 0.7,
                 "max_new_tokens": 2048,
                 "stop": stop + ["Observation:"]
             }
-        )
+            response = client.post(
+                self.url,
+                json=json,
+                timeout=600
+            )
+        # response = requests.post(
+        #     self.url,
+        #     json=json
+        # )
         response.raise_for_status()
         return response.json()["response"]
 
@@ -42,7 +48,9 @@ if __name__ =='__main__':
         PubmedQueryRun(),
         ]
     tools += load_tools(["arxiv"])
-    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False,return_intermediate_steps=True)
     while True:
         query = input('请提出你的问题：')
-        print(agent.run(query))
+        response = agent({"input":query})
+        print(response["intermediate_steps"])
+        print(response["output"])

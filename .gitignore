@@ -4,3 +4,5 @@ assistant/.env
 *cache
 *.txt
 *.ipynb
+*.ipynb_checkpoints
+*__pycache__

@@ -6,5 +6,6 @@ class PromptRequest(BaseModel):
     max_new_tokens: int
     stop: Union[str,List[str]]
 
-
+class SearchRequest(BaseModel):
+    query: str
     

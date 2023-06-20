@@ -65,7 +65,7 @@ if __name__ == '__main__':
     embeddings = HuggingFaceInstructEmbeddings(
     query_instruction="Summary the text for retirval: "
 )
-    vectorstore = FAISS.load_local('/root/autodl-fs/pubmeds/embedding/0/',embeddings=embeddings)
+    vectorstore = FAISS.load_local('/root/autodl-tmp/pubmeds/embeddings2_merge',embeddings=embeddings)
     llm = HuggingFacePipeline(pipeline=pipe)
     tools = [
         PubMedSearchTool(

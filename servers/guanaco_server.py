@@ -2,12 +2,12 @@ from fastapi import FastAPI
 from models import *
 from fastchat.model.model_adapter import load_model
 import torch
-
 app = FastAPI()
 model_path = '/root/autodl-tmp/cache/transformers/guanaco-33b-merged'
 # model_path = '/root/autodl-tmp/cache/transformers/vicuna/13B'
 device ='cuda'
 model, tokenizer = load_model(model_path=model_path,device='cuda',num_gpus=2,max_gpu_memory='40GiB')
+
 @torch.inference_mode()
 def compute_until_stop(model, tokenizer, params, device,
                     context_len=2048, stream_interval=2):

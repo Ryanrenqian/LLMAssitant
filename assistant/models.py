@@ -12,7 +12,7 @@ class UrlLLM(LLM):
             json={
                 "prompt": prompt,
                 "temperature": 0.7,
-                "max_new_tokens": 2048,
+                "max_new_tokens": 1024,
                 "stop": stop + ["Observation:"]
             }
             response = client.post(
@@ -37,15 +37,26 @@ if __name__ =='__main__':
     from langchain.agents import load_tools
     from langchain.agents import initialize_agent, Tool
     from langchain.agents import AgentType
+    from tools.vetorstore_search import PubMedSearchTool
+    from langchain.vectorstores import FAISS
+    from langchain.embeddings import HuggingFaceInstructEmbeddings
     # from langchain import  SerpAPIWrapper
-    from langchain.tools import PubmedQueryRun
+    # from langchain.tools import PubmedQueryRun
     # from dotenv import find_dotenv,load_dotenv
     import os
     os.environ['SERPAPI_API_KEY']="f37fdf8418be72fdfbb5ad3ca36129f1b2638487d646bdc294bff4cb50bc1db0"
     # load_dotenv(find_dotenv())
-    llm = UrlLLM(url="http://region-3.seetacloud.com:54504/prompt")
+    # llm = UrlLLM(url="http://region-3.seetacloud.com:54504/prompt")
+    llm = UrlLLM(url="http://localhost:6006/prompt")
+    embeddings = HuggingFaceInstructEmbeddings(
+    query_instruction="Summary the text for retirval: "
+)
+    vectorstore = FAISS.load_local('/root/autodl-tmp/pubmeds/embeddings2_merge',embeddings=embeddings)
     tools = [
-        PubmedQueryRun(),
+        PubMedSearchTool(
+            llm = llm,
+            vertorstore = vectorstore
+            ),
         ]
     tools += load_tools(["arxiv"])
     agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False,return_intermediate_steps=True)

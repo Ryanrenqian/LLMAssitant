@@ -9,6 +9,8 @@ class UrlLLM(LLM):
     
     def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
         with httpx.Client() as client:
+            if stop is None:
+                stop = []
             json={
                 "prompt": prompt,
                 "temperature": 0.7,
@@ -18,7 +20,7 @@ class UrlLLM(LLM):
             response = client.post(
                 self.url,
                 json=json,
-                timeout=600
+                timeout=99999
             )
         # response = requests.post(
         #     self.url,
@@ -33,35 +35,24 @@ class UrlLLM(LLM):
         return {
         }
 
+models = {}
+def register_models(model: LLM,name:str,override:bool=False):
+    if not override:
+        assert name not in models.keys(), f"{name} has been registered."
+    models[name] = model
+
+# 加载模型
+register_models(UrlLLM(url="https://u122266-8cae-52f76f9f.neimeng.seetacloud.com:6443/prompt"),name='guanaco-33b')
+
 if __name__ =='__main__':
-    from langchain.agents import load_tools
-    from langchain.agents import initialize_agent, Tool
-    from langchain.agents import AgentType
-    from tools.vetorstore_search import PubMedSearchTool
-    from langchain.vectorstores import FAISS
-    from langchain.embeddings import HuggingFaceInstructEmbeddings
-    # from langchain import  SerpAPIWrapper
-    # from langchain.tools import PubmedQueryRun
-    # from dotenv import find_dotenv,load_dotenv
+    from langchain import OpenAI, ConversationChain, LLMChain
+    from langchain.memory import ConversationBufferMemory
     import os
-    os.environ['SERPAPI_API_KEY']="f37fdf8418be72fdfbb5ad3ca36129f1b2638487d646bdc294bff4cb50bc1db0"
-    # load_dotenv(find_dotenv())
-    # llm = UrlLLM(url="http://region-3.seetacloud.com:54504/prompt")
     llm = UrlLLM(url="http://localhost:6006/prompt")
-    embeddings = HuggingFaceInstructEmbeddings(
-    query_instruction="Summary the text for retirval: "
-)
-    vectorstore = FAISS.load_local('/root/autodl-tmp/pubmeds/embeddings2_merge',embeddings=embeddings)
-    tools = [
-        PubMedSearchTool(
-            llm = llm,
-            vertorstore = vectorstore
-            ),
-        ]
-    tools += load_tools(["arxiv"])
-    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False,return_intermediate_steps=True)
-    while True:
-        query = input('请提出你的问题：')
-        response = agent({"input":query})
-        print(response["intermediate_steps"])
-        print(response["output"])
+    # search = PubmedQueryRun()
+    conversation = ConversationChain(
+        llm=llm,
+        memory=ConversationBufferMemory(),
+        verbose=True
+    )
+    print(conversation.run("What is ChatGPT?"))

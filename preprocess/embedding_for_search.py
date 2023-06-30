@@ -35,10 +35,11 @@ def main():
         chunk_size=512, chunk_overlap=0
     )
     doc_save = args.doc_save
+    save = args.output
     if not os.path.exists(doc_save):
         for csv_file in tqdm(glob.glob(args.input)):
             basename = os.path.basename(csv_file)[:-4]
-            save = os.path.join(args.output,basename)
+            
             if os.path.exists(save):
                 continue
             if args.parser == 'csv':

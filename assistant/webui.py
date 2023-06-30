@@ -90,8 +90,7 @@ def main():
     # with gr.Blocks() as demo:
         gr.Markdown(webui_title)
         with gr.Tab("AI强化检索引擎"):
-            init_message = f"""欢迎使用AI强化检索引擎，该方案采用最先进的sentence_transformers对文本内容进行向量化表征，能够有效的提升检索的相关性
-            """
+            init_message = f"""欢迎使用AI强化检索引擎，该方案采用最先进的sentence_transformers对文本内容进行向量化表征，能够有效的提升检索的相关性."""
             with gr.Row():
                 with gr.Column(scale=10):
                     chatbot = gr.Chatbot([[None, init_message]],

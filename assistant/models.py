@@ -42,7 +42,7 @@ def register_models(model: LLM,name:str,override:bool=False):
     models[name] = model
 
 # 加载模型
-register_models(UrlLLM(url="https://u122266-8cae-52f76f9f.neimeng.seetacloud.com:6443/prompt"),name='guanaco-33b')
+register_models(UrlLLM(url="http://127.0.0.1:6060/prompt"),name='guanaco-33b')
 
 if __name__ =='__main__':
     from langchain import OpenAI, ConversationChain, LLMChain

@@ -6,3 +6,5 @@ assistant/.env
 *.ipynb
 *.ipynb_checkpoints
 *__pycache__
+*.log
+*.out

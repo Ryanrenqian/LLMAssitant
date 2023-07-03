@@ -1,5 +1,6 @@
 import gradio as gr
 import os
+os.environ["no_proxy"] = "localhost,127.0.0.1,::1"
 from models import models
 from vetorstore_search import vectorstores,vectorsearches
 from langchain.agents import AgentType,initialize_agent
@@ -104,6 +105,9 @@ def main():
                                     interactive=True,
                                     value=list(vectorstores.keys())[0]
                                     )
+                    top_p = gr.Slider(0, 1, value=0.95, label="top_p", info="Choose between 0 and 1.设置阈值")
+                    top_k = gr.Slider(0, 100, value=0.95, label="top_K", info="Choose between 0 and 1.设置阈值")
+                    
                 query.submit(fast_searh,
                                     [chatbot,query,select_vs],
                                     [chatbot, query])
@@ -158,7 +162,8 @@ def main():
                             [chatbot, query,temperature,top_p,max_length,selected_tools,selected_llm],
                             [chatbot, query]
                             )
-    demo.queue(concurrency_count=10).launch(server_name='0.0.0.0',
+    demo.queue(concurrency_count=3).launch(
+            server_name='0.0.0.0',
             server_port=6006,
             show_api=False,
             share=False,

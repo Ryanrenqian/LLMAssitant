@@ -32,7 +32,7 @@ def main():
     args = get_args()
     docs = []
     text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=512, chunk_overlap=0
+        chunk_size=1024, chunk_overlap=0
     )
     doc_save = args.doc_save
     save = args.output
@@ -65,7 +65,6 @@ def main():
             datas = loader.load()
             print("Number of Documents in",basename,":",len(datas))
             
-            # text_splitter = NLTKTextSplitter(chunk_size = 512,)
             split_docs = text_splitter.split_documents(datas)
             print("Split of Documents:",len(split_docs))
             docs+=split_docs
@@ -78,15 +77,17 @@ def main():
     else:
         with open(doc_save,'rb') as f:
             docs = pickle.load(f)
-    embeddings = HuggingFaceInstructEmbeddings(
-            query_instruction=args.command,
-            model_name = args.model_name_or_path
-        )
     st = len(docs)//args.workers * args.ids
     if args.ids != args.workers - 1:
         ed = len(docs)//args.workers * (args.ids+1)
     else:
         ed = len(docs)
+    print('embeding range',st,'----->',ed)
+    embeddings = HuggingFaceInstructEmbeddings(
+            # query_instruction=args.command,
+            model_name = args.model_name_or_path
+        )
+    
     vector_storage = FAISS.from_documents(docs[st:ed], embeddings)
     vector_storage.save_local(save)
     

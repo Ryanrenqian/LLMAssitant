@@ -17,6 +17,7 @@ def get_args():
     paser.add_argument('--doc_save','-d',type=str,help='column as content')
     paser.add_argument('--ids',type=int,help='ids  of worker')
     paser.add_argument('--workers','-n',type=int,help='number  of worker')
+    paser.add_argument('--model_name_or_path','-m',type=str,default='/root/autodl-tmp/cache/instructor-xl',help='instruct for LLM embedding')
     return paser.parse_args()
 
 def main():

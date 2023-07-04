@@ -27,46 +27,47 @@ def clean_string(text):
 
 def main():
     args = get_args()
-    docs = []
+    
     text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=512, chunk_overlap=0
     )
     doc_save = args.doc_save
-    save = args.output
-    if not os.path.exists(doc_save):
-        for csv_file in tqdm(glob.glob(args.input)):
-            basename = os.path.basename(csv_file)[:-4]
-            if os.path.exists(save):
+    qbar = tqdm(glob.glob(args.input))
+    print(len(qbar))
+    docs = []
+    for csv_file in qbar:
+        basename = os.path.basename(csv_file)[:-4]
+        if args.parser == 'csv':
+            df = pd.read_csv(csv_file)
+        elif args.parser == 'pkl':
+            try:
+                df = pd.read_pickle(csv_file)
+                df.columns = ['pmid','title','2','3','4','5','abstract']
+            except:
                 continue
-            if args.parser == 'csv':
-                df = pd.read_csv(csv_file)
-            elif args.parser == 'pkl':
-                try:
-                    df = pd.read_pickle(csv_file)
-                    df.columns = ['pmid','title','2','3','4','5','abstract']
-                except:
-                    continue
-            else:
-                raise ValueError("please check your parser, only pkl and csv supported")
-            field = args.field
-            if field not in list(df.columns):
-                if field.isnumeric():
-                    field = int(field)
-            df = df[df[field].notna()]
-            print("Shape of df",df.shape)
-            if len(df)<1:
-                continue
-            df[field] = df[field].apply(clean_string)
-            loader = DataFrameLoader(df,page_content_column=field)
-            datas = loader.load()
-            print("Number of Documents in",basename,":",len(datas))
-            
-            split_docs = text_splitter.split_documents(datas)
-            print("Split of Documents:",len(split_docs))
-            docs+=split_docs
-        with open(doc_save,'wb') as f:
-            pickle.dump(docs,f)
-        for doc in docs:
-            if len(doc.page_content)>512:
-                print(doc.page_content)
-                break
+        else:
+            raise ValueError("please check your parser, only pkl and csv supported")
+        field = args.field
+        if field not in list(df.columns):
+            if field.isnumeric():
+                field = int(field)
+        df = df[df[field].notna()]
+        print("Shape of df",df.shape)
+        if len(df)<1:
+            continue
+        df[field] = df[field].apply(clean_string)
+        loader = DataFrameLoader(df,page_content_column=field)
+        datas = loader.load()
+        print("Number of Documents in",basename,":",len(datas))
+        
+        split_docs = text_splitter.split_documents(datas)
+        print("Split of Documents:",len(split_docs))
+        docs+=split_docs
+    with open(doc_save,'wb') as f:
+        pickle.dump(docs,f)
+    for doc in docs:
+        if len(doc.page_content)>512:
+            print(doc.page_content)
+            break
+if __name__ == '__main__':
+    main()

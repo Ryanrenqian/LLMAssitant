@@ -66,6 +66,7 @@ def compute_until_stop(model, tokenizer, params, device,
 
         
         output = tokenizer.decode(output_ids, skip_special_tokens=True)
+        output = " ".join(output.split())
         # print("Partial output:", output)
         for stop_str in stop_strings:
             # print(f"Looking for '{stop_str}' in '{output[:l_prompt]}'#END")
@@ -87,6 +88,7 @@ def compute_until_stop(model, tokenizer, params, device,
     del past_key_values
     if pos != -1:
         return output[:pos]
+     
     return output
 
 @app.post("/prompt")

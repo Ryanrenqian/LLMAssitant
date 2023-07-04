@@ -39,9 +39,10 @@ def register_storevectors(vectorstore: VectorStore,name:str,override:bool=False)
     
 ## 加载vectorstore
 embeddings = HuggingFaceInstructEmbeddings(
-    query_instruction="Summary the text for retirval: "
+    model_name='/root/autodl-tmp/cache/instructor-xl',
+    query_instruction="Summary the text for retirval: ",
 )
-vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_0',embeddings=embeddings)
+vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_all',embeddings=embeddings)
 vectorsearch = PubMedSearchTool(
             llm = list(models.values())[0],
             vectorstore = vectorstore,
@@ -49,29 +50,29 @@ vectorsearch = PubMedSearchTool(
 register_storevectors(vectorstore,'pubmed_0')
 register_vectorsearches(vectorsearch,'pubmed_0')
 
-vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_1',embeddings=embeddings)
-vectorsearch = PubMedSearchTool(
-            llm = list(models.values())[0],
-            vectorstore = vectorstore,
-        )
-register_storevectors(vectorstore,'pubmed_1')
-register_vectorsearches(vectorsearch,'pubmed_1')
+# vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_1',embeddings=embeddings)
+# vectorsearch = PubMedSearchTool(
+#             llm = list(models.values())[0],
+#             vectorstore = vectorstore,
+#         )
+# register_storevectors(vectorstore,'pubmed_1')
+# register_vectorsearches(vectorsearch,'pubmed_1')
 
-vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_2',embeddings=embeddings)
-vectorsearch = PubMedSearchTool(
-            llm = list(models.values())[0],
-            vectorstore = vectorstore,
-        )
-register_storevectors(vectorstore,'pubmed_2')
-register_vectorsearches(vectorsearch,'pubmed_2')
+# vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_2',embeddings=embeddings)
+# vectorsearch = PubMedSearchTool(
+#             llm = list(models.values())[0],
+#             vectorstore = vectorstore,
+#         )
+# register_storevectors(vectorstore,'pubmed_2')
+# register_vectorsearches(vectorsearch,'pubmed_2')
 
-vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_3',embeddings=embeddings)
-vectorsearch = PubMedSearchTool(
-            llm = list(models.values())[0],
-            vectorstore = vectorstore,
-        )
-register_storevectors(vectorstore,'pubmed_3')
-register_vectorsearches(vectorsearch,'pubmed_3')
+# vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/pubmed_embedding2/pubmed_embedding2_3',embeddings=embeddings)
+# vectorsearch = PubMedSearchTool(
+#             llm = list(models.values())[0],
+#             vectorstore = vectorstore,
+#         )
+# register_storevectors(vectorstore,'pubmed_3')
+# register_vectorsearches(vectorsearch,'pubmed_3')
 
 vectorstore = FAISS.load_local('/root/autodl-tmp/token_instruct_emb/patient_embedding/patents_embedding_0',embeddings=embeddings)
 vectorsearch = PubMedSearchTool(
@@ -98,6 +99,7 @@ if __name__ == '__main__':
 
     llm = UrlLLM(url="http://localhost:6006/prompt")
     embeddings = HuggingFaceInstructEmbeddings(
+
     query_instruction="Summary the text for retirval: "
 )
     vectorstore = FAISS.load_local('/root/autodl-tmp/pubmed_embedding/0',embeddings=embeddings)

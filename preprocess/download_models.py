@@ -7,4 +7,4 @@ def get_args():
     return parser.parse_args()
 if __name__ =='__main__':
     args = get_args()
-    snapshot_download(args.model_name,local_dir=os.path.join(args.save_path,args.model_name),local_dir_use_symlinks=False,resume_download=True)
+    snapshot_download(args.model_name,cache_dir='/root/autodl-tmp/cache',local_dir=os.path.join(args.save_path,args.model_name),local_dir_use_symlinks=False,resume_download=True)
